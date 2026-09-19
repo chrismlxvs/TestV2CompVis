@@ -1,0 +1,17 @@
+gaussian_splatting:
+  iterations: 30000
+  learning_rate_position: 0.00016
+  learning_rate_feature: 0.0025
+  learning_rate_opacity: 0.05
+  learning_rate_scaling: 0.005
+  learning_rate_rotation: 0.001
+
+initialization:
+  source: "lidar"               # 'lidar' or 'random'
+  k_neighbors: 3                # k-NN for initial scaling calculation
+  default_opacity: 0.1
+  scale_factor: 1.0
+
+export:
+  format: "ply"                 # Standard 3DGS initial point cloud format
+  output_dir: "data/processed/gs_dataset"

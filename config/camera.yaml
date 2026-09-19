@@ -1,0 +1,10 @@
+camera:
+  width: 640
+  height: 480
+  fov: 90
+  fps: 10
+  
+  # Mounted at the front of the chassis (offset from base_link)
+  offset_x: 0.2
+  offset_y: 0.0
+  offset_z: 0.1

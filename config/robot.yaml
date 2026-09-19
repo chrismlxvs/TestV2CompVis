@@ -1,0 +1,18 @@
+robot:
+  # Chassis dimensions (length/X, width/Y, height/Z)
+  chassis_size: [0.4, 0.3, 0.15]
+  chassis_mass: 5.0
+  
+  # Drive system (4-Wheel Skid-Steer)
+  wheel_radius: 0.08
+  wheel_base: 0.35      # distance between left and right wheels along Y
+  wheel_offset_x: 0.15  # distance from chassis center to front/rear axles along X
+  wheel_mass: 0.5
+  
+  # Starting pose in world frame
+  initial_position: [0.0, 0.0, 0.2]
+  initial_orientation: [0.0, 0.0, 0.0]  # Euler Roll, Pitch, Yaw
+
+  # Motion limits
+  max_linear_velocity: 1.5   # m/s
+  max_angular_velocity: 3.0  # rad/s

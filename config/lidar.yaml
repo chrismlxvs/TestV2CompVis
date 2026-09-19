@@ -1,0 +1,18 @@
+lidar:
+  frequency: 10  # Hz
+
+  # Range limits
+  range_min: 0.2
+  range_max: 20.0
+
+  # 3D Sensor setup (e.g., 16-channel like VLP-16)
+  channels: 16
+  vertical_fov: [1.0, 15.0]  # min, max in degrees
+  
+  horizontal_fov: 360.0
+  horizontal_resolution: 1.0   # degrees per ray
+
+  # Extrinsics (T_base_lidar) -> Mounted on top center of chassis
+  offset_x: 0.0
+  offset_y: 0.0
+  offset_z: 0.2

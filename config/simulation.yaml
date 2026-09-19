@@ -1,0 +1,9 @@
+simulation:
+  timestep: 0.01  # 100 Hz
+  gravity: [0, 0, -9.81]
+  gui: true
+  
+environment:
+  room_size: [10.0, 10.0]
+  wall_height: 2.5
+  num_obstacles: 8

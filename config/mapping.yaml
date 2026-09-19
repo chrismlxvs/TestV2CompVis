@@ -1,0 +1,4 @@
+mapping:
+  voxel_size: 0.05       # 5cm voxels for downsampling
+  max_points: 1000000    # Safeguard against memory overflow
+  visualize_live: false  # If true, updates open3d window (can be slow)
