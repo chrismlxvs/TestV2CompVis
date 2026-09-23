@@ -29,11 +29,10 @@ class LidarGaussianInitializer:
 
     def generate_initial_gaussians(self, pcd: o3d.geometry.PointCloud) -> Dict[str, np.ndarray]:
         """
-        Converts an Open3D point cloud into 3D Gaussian initialization attributes.
-        Returns dictionary containing positions, colors, scales, rotations, and opacities.
+        Converts an Open3D point cloud into geometry-only Gaussian initialization attributes.
+        RGB appearance is initialized neutrally and learned from camera images during training.
         """
         points = np.asarray(pcd.points)
-        colors = np.asarray(pcd.colors) if pcd.has_colors() else np.ones_like(points) * 0.5
         
         num_points = len(points)
         print(f"Initializing {num_points} 3D Gaussians from LiDAR points...")
@@ -53,9 +52,8 @@ class LidarGaussianInitializer:
         opacities_linear = np.full((num_points, 1), self.init_cfg.default_opacity)
         opacities_logit = np.log(opacities_linear / (1.0 - opacities_linear))
         
-        # 5. Base RGB Features (converted to 0th-order Spherical Harmonics coefficient)
-        # C0 coefficient = (RGB - 0.5) / 0.28209479177387814
-        sh_c0 = (colors - 0.5) / 0.28209479177387814
+        # Keep LiDAR initialization geometry-only. Zero SH coefficients render as neutral gray.
+        sh_c0 = np.zeros((num_points, 3), dtype=np.float64)
 
         return {
             "positions": positions,

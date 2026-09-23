@@ -15,3 +15,4 @@ initialization:
 export:
   format: "ply"                 # Standard 3DGS initial point cloud format
   output_dir: "data/processed/gs_dataset"
+  checkpoint_path: "data/processed/gs_dataset/gaussian_model.pt"

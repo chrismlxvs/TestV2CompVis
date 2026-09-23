@@ -6,11 +6,11 @@ import numpy as np
 from torch.utils.data import Dataset
 
 class GSDataset(Dataset):
-    def __init__(self, dataset_path: str, device: str = "cuda"):
+    def __init__(self, dataset_path: str, device: str = "cuda", manifest_name: str = "transforms.json"):
         self.device = device
         self.dataset_path = dataset_path
         
-        with open(os.path.join(dataset_path, "transforms.json"), "r") as f:
+        with open(os.path.join(dataset_path, manifest_name), "r") as f:
             self.meta = json.load(f)
             
         self.K = torch.tensor([
