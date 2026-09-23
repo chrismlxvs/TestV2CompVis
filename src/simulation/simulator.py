@@ -26,8 +26,20 @@ class Simulator:
     def step(self):
         pb.stepSimulation()
         
+    def is_connected(self) -> bool:
+        try:
+            return bool(pb.isConnected(self.client))
+        except Exception:
+            return False
+
     def disconnect(self):
-        pb.disconnect()
+        """Safely close PyBullet. Closing the GUI window first can already kill the connection."""
+        try:
+            if self.is_connected():
+                pb.disconnect(self.client)
+        except Exception:
+            # Window already closed / OpenGL context already destroyed.
+            pass
 
     # --- Math Helpers hiding PyBullet functions ---
     def euler_to_quaternion(self, rpy: List[float]) -> np.ndarray:

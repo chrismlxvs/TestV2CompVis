@@ -17,7 +17,12 @@ class Robot:
         # State tracking for velocity smoothing
         self.current_v = 0.0
         self.current_w = 0.0
-        self.smoothing_factor = 0.15  # Smoothing rate [0.01 (very smooth) - 1.0 (raw/jerky)]
+        self.smoothing_factor = float(getattr(self.cfg, "velocity_smoothing", 0.45))
+        self.brake_smoothing = float(getattr(self.cfg, "brake_smoothing", 0.65))
+        self.wheel_motor_force = float(getattr(self.cfg, "wheel_motor_force", 80.0))
+        self.wheel_lateral_friction = float(getattr(self.cfg, "wheel_lateral_friction", 1.2))
+        self.chassis_linear_damping = float(getattr(self.cfg, "chassis_linear_damping", 0.02))
+        self.chassis_angular_damping = float(getattr(self.cfg, "chassis_angular_damping", 0.08))
         
         self.robot_id = self._build_robot()
         
@@ -80,28 +85,35 @@ class Robot:
         )
         
         # Chassis Damping for stability
-        pb.changeDynamics(robot_id, -1, linearDamping=0.05, angularDamping=0.05)
+        pb.changeDynamics(
+            robot_id,
+            -1,
+            linearDamping=self.chassis_linear_damping,
+            angularDamping=self.chassis_angular_damping,
+        )
 
         # Tuned Dynamics for 4WD Skid-Steer
         for i in range(4):
             pb.changeDynamics(
                 robot_id, 
                 i, 
-                lateralFriction=0.35,   
-                spinningFriction=0.01,  # Smooths low-speed rotations
-                rollingFriction=0.01    # Reduces sudden stops
+                lateralFriction=self.wheel_lateral_friction,
+                spinningFriction=0.02,
+                rollingFriction=0.005,
             ) 
             
         return robot_id
 
     def set_velocity(self, linear: float, angular: float):
-        """4-Wheel Skid-Steer kinematics with smooth target blending"""
+        """4-Wheel Skid-Steer kinematics with responsive target blending."""
         target_v = np.clip(linear, -self.cfg.max_linear_velocity, self.cfg.max_linear_velocity)
         target_w = np.clip(angular, -self.cfg.max_angular_velocity, self.cfg.max_angular_velocity)
-        
-        # Exponential Moving Average / Low-Pass Filter for smooth acceleration
-        self.current_v += (target_v - self.current_v) * self.smoothing_factor
-        self.current_w += (target_w - self.current_w) * self.smoothing_factor
+
+        # Accelerate with normal smoothing; brake harder when the stick is released.
+        alpha_v = self.brake_smoothing if abs(target_v) < 1e-6 else self.smoothing_factor
+        alpha_w = self.brake_smoothing if abs(target_w) < 1e-6 else self.smoothing_factor
+        self.current_v += (target_v - self.current_v) * alpha_v
+        self.current_w += (target_w - self.current_w) * alpha_w
         
         L = self.cfg.wheel_base
         R = self.cfg.wheel_radius
@@ -114,7 +126,7 @@ class Robot:
         omega_left = v_left / R
         omega_right = v_right / R
         
-        max_torque = 25.0  # Reduced torque cap prevents aggressive jerk on startup
+        max_torque = self.wheel_motor_force
         
         # Left wheels
         pb.setJointMotorControlArray(

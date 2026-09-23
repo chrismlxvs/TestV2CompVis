@@ -13,6 +13,13 @@ robot:
   initial_position: [0.0, 0.0, 0.2]
   initial_orientation: [0.0, 0.0, 0.0]  # Euler Roll, Pitch, Yaw
 
-  # Motion limits
+  # Motion limits: keep linear speed moderate for stable camera/LiDAR,
+  # but allow faster turning for quicker room coverage.
   max_linear_velocity: 1.5   # m/s
-  max_angular_velocity: 3.0  # rad/s
+  max_angular_velocity: 4.0  # rad/s
+  velocity_smoothing: 0.45   # higher = snappier response
+  brake_smoothing: 0.65      # how quickly the robot stops when keys are released
+  wheel_motor_force: 80.0
+  wheel_lateral_friction: 1.2
+  chassis_linear_damping: 0.02
+  chassis_angular_damping: 0.08

@@ -1,0 +1,10 @@
+numpy
+scipy
+matplotlib
+opencv-python
+open3d
+omegaconf
+pybullet
+tqdm
+torch
+gsplat
